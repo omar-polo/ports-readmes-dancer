@@ -18,7 +18,7 @@ use Dancer ':syntax';
 use strict;
 use warnings;
 
-my $db = DBI->connect("dbi:SQLite:dbname=".config->{database}, '', '', 
+my $db = DBI->connect("dbi:SQLite:dbname=".config->{database}, '', '',
     {ReadOnly => 1});
 
 my $category;
@@ -35,7 +35,7 @@ my $list_cat_req = $db->prepare(
 		fullpkgname,
 		comment
 	    from _paths
-		join _Ports on _paths.id=_Ports.fullpkgpath 
+		join _Ports on _paths.id=_Ports.fullpkgpath
 		    and _paths.id=_paths.canonical
 		join _categories on _categories.fullpkgpath=_paths.id
 		join _categorykeys on _categorykeys.keyref=_categories.value
@@ -57,9 +57,9 @@ my $info_req = $db->prepare(
 		fullpkgname,
 		permit.value,
 		_email.value
-	    from _paths 
+	    from _paths
 	    	join _paths p2 on p2.id=_paths.pkgpath
-		join _Ports on _paths.id=_Ports.fullpkgpath 
+		join _Ports on _paths.id=_Ports.fullpkgpath
 		left join _Descr on _paths.id=_Descr.fullpkgpath
 		join _keywords2 permit
 		    on _ports.permit_package=permit.keyref
@@ -69,11 +69,11 @@ my ($id, $path, $simplepath, $homepage, $descr, $permit, $maintainer);
 $info_req->bind_columns(\($id, $path,  $simplepath, $comment, $homepage, $descr, $fullpkgname, $permit, $maintainer));
 
 my $dep_req = $db->prepare(
-	q{select 
+	q{select
 		_depends.type,
 		_depends.fulldepends,
 		t2.fullpkgpath
-	from _depends 
+	from _depends
 		join _paths on _depends.dependspath=_paths.id
 		join _paths t2 on _paths.canonical=t2.id
 	where _depends.fullpkgpath=?
@@ -92,7 +92,7 @@ my $revdep_req = $db->prepare(
 		where _depends.dependspath in
 			(select id from _paths where canonical=?)
 	order by _paths.fullpkgpath});
-	    
+
 my $revpath;
 $revdep_req->bind_columns(\$revpath);
 
@@ -100,7 +100,7 @@ my $multi_req = $db->prepare(
 	q{select
 		_ports.fullpkgname,
 		t2.fullpkgpath
-	    from _multi 
+	    from _multi
 	    	join _paths on _multi.subpkgpath=_paths.id
 		join _paths t2 on _paths.canonical=t2.id
 		join _ports on _paths.canonical=_ports.fullpkgpath
@@ -145,12 +145,12 @@ my $broken_req = $db->prepare(
 	    	left join _arch on _arch.keyref=_broken.arch
 	    where fullpkgpath=?
 	    order by _arch.value});
-	
+
 my $broken;
 $broken_req->bind_columns(\($arch, $broken));
 
 my $readme_req = $db->prepare(
-	q{select 
+	q{select
 		value
 	    from _readme
 	    where fullpkgpath=?});
@@ -159,7 +159,7 @@ my $readme;
 $readme_req->bind_columns(\$readme);
 
 my $canonical_req = $db->prepare(
-	q{select 
+	q{select
 		_paths.fullpkgpath
 	    from _paths
 	    join _paths t2 on t2.canonical=_paths.id
@@ -167,13 +167,13 @@ my $canonical_req = $db->prepare(
 
 my $canonical;
 $canonical_req->bind_columns(\$canonical);
-	    
+
 my $full_list_req = $db->prepare(
 	q{select min(_paths.fullpkgpath),
 		fullpkgname,
 		comment
 	    from _paths
-		join _Ports on _paths.id=_Ports.fullpkgpath 
+		join _Ports on _paths.id=_Ports.fullpkgpath
 		    and _paths.id=_paths.canonical
 		group by fullpkgname
 		order by fullpkgname
@@ -275,7 +275,7 @@ sub pkgpath
 
 	$broken_req->execute($id);
 	while ($broken_req->fetch) {
-		push (@{$e->{broken}}, 
+		push (@{$e->{broken}},
 		    {
 			arch => $arch,
 			text => $broken
@@ -302,7 +302,7 @@ sub pkgpath
 	while ($cat_req->fetch) {
 		push @{$e->{category}},
 		    {
-		    	name => $category, 
+		    	name => $category,
 			url => "/cat/$category"
 		    };
 	}
