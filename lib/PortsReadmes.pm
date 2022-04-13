@@ -84,7 +84,13 @@ get '/search' => sub {
     if (param "maintainer") {
     	$search->{maintainer} = param "maintainer";
     }
-    my $e = SqlPorts->search($search);
+
+    my $e;
+    if (param "query") {
+        $e = SqlPorts->fts(param "query");
+    } else {
+        $e = SqlPorts->search($search);
+    }
     template 'searchresult', $e;
 };
 true;

@@ -16,6 +16,12 @@
 <fieldset>
 <legend>Search</legend>
 <div>
+<label for="query">Query</label>
+<input type="text" name="query" id="query" value="<% params.query %>">
+</div>
+<hr>
+<p>Advanced Search:</p>
+<div>
 <label for="file">File</label>
 <input type="text" name="file" id="file" value="<% params.file %>">
 </div>

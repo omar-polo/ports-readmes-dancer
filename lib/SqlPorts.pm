@@ -338,6 +338,28 @@ sub full_list
 	return $e;
 }
 
+sub fts
+{
+	my ($class, $query) = @_;
+	my @params = ($query);
+	my $req = $db->prepare(
+		q{select fullpkgpath, fullpkgname, comment
+		    from ports_fts
+		   where ports_fts match ?
+		});
+	$req->bind_columns(\($fullpkgpath, $fullpkgname, $comment));
+	$req->execute(@params);
+	my $e = create_hash();
+	while ($req->fetch) {
+		push(@{$e->{result}}, {
+			name => $fullpkgname,
+			url => "/path/$fullpkgpath",
+			comment => $comment
+		})
+	}
+	return $e
+}
+
 sub search
 {
 	my ($class, $search) = @_;
